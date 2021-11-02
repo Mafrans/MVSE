@@ -1,0 +1,68 @@
+version: '3.5'
+
+networks:
+  valorantmap-docker:
+    name: valorantmap-docker
+    driver: bridge
+
+services:
+  db:
+    container_name: valorantmap-db
+    build:
+      context: ./.docker/postgres
+    environment:
+      POSTGRES_USER: valorantmap
+      POSTGRES_DB: valorantmap
+      POSTGRES_PASSWORD: valorantmap
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-valorantmap:/var/lib/postgresql/data
+    networks:
+      - valorantmap-docker
+  nginx:
+    container_name: valorantmap-nginx
+    build:
+      context: ./.docker/nginx
+    ports:
+      - '80:80'
+    networks:
+      - valorantmap-docker
+    depends_on:
+      - server
+      - client
+  client:
+    container_name: valorantmap-client
+    build:
+      context: ./client
+    working_dir: /opt/app
+    stdin_open: true
+    volumes:
+      - ./client:/opt/app
+      - /opt/app/node_modules
+    command: 'yarn dev'
+    networks:
+      - valorantmap-docker
+  server:
+    container_name: valorantmap-server
+    build:
+      context: ./server
+    working_dir: /opt/app
+    stdin_open: true
+    environment:
+      DB_HOST: db
+      DB_USER: valorantmap
+      DB_PASSWORD: valorantmap
+      DB_NAME: valorantmap
+      NODE_ENV: development
+      SECRET: development
+    volumes:
+      - ./server:/opt/app
+      - /opt/app/node_modules
+    command: 'yarn start'
+    networks:
+      - valorantmap-docker
+    depends_on:
+      - db
+volumes:
+  postgres-valorantmap:
