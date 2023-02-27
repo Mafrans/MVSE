@@ -1,12 +1,12 @@
 // boilerplate React.FC component
-import React from 'react'
+import React from "react";
 
-type MapProps = {}
+type MapProps = {};
 
 export const Map: React.FC<MapProps> = () => {
   return (
     <div>
       <h1>Map</h1>
     </div>
-  )
-}
+  );
+};
