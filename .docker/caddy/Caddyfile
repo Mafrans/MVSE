@@ -1,0 +1,11 @@
+{
+	local_certs
+}
+
+node.test {
+	reverse_proxy client:3000
+}
+
+api.node.test {
+    reverse_proxy server:3000
+}

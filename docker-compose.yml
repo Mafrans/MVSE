@@ -20,12 +20,14 @@ services:
       - postgres-valorantmap:/var/lib/postgresql/data
     networks:
       - valorantmap-docker
-  nginx:
-    container_name: valorantmap-nginx
+  caddy:
+    container_name: valorantmap-caddy
     build:
-      context: ./.docker/nginx
+      context: ./.docker/caddy
     ports:
       - '80:80'
+    volumes:
+      - ./.docker/caddy:/etc/caddy
     networks:
       - valorantmap-docker
     depends_on:
